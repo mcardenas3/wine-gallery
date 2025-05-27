@@ -15,6 +15,7 @@ import Container from '@mui/material/Container'
 import { useState, useEffect } from 'react'
 import WinemakerInformation from './pages/WinemakerInformation'
 import { NavigationProvider } from './context/NavigationContext'
+import Contact from './pages/Contact'
 
 // Create theme with Playfair Display font
 const theme = createTheme({
@@ -134,7 +135,7 @@ function App() {
             <Route path="/wine-not-found" element={<WineNotFound />} />
             <Route path="/winemakers" element={<Winemakers />} />
             <Route path="/winemaker/:id" element={<WinemakerInformation />} />
-            <Route path="/about" element={<div>Contact Page Coming Soon</div>} />
+            <Route path="/about" element={<Contact />} />
           </Routes>
         </NavigationProvider>
       </ThemeProvider>

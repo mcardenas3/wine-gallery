@@ -84,12 +84,35 @@ export const NavigationProvider = ({ children }: { children: ReactNode }) => {
       if (currentPath === '/' || currentPath === '/collection') {
         setSourceContext('collection');
         localStorage.setItem('navigationContext', 'collection');
+        
+        // Limpiar los IDs específicos de winemaker cuando cambiamos a colección
+        // para evitar que persistan entre contextos diferentes
+        if (specificWinemakerId) {
+          handleSetSpecificWinemaker(null, null);
+        }
       } else if (currentPath === '/winemakers') {
         setSourceContext('winemakers');
         localStorage.setItem('navigationContext', 'winemakers');
+        
+        // Limpiar los IDs específicos de vino cuando cambiamos a winemakers
+        // para evitar que persistan entre contextos diferentes
+        if (specificWineId) {
+          handleSetSpecificWine(null, null);
+        }
       }
     }
-  }, [location.pathname]);
+    
+    // Adicionalmente, si estamos viendo winemakers, asegurémonos de limpiar 
+    // cualquier referencia a vinos específicos
+    if (currentPath === '/winemakers') {
+      handleSetSpecificWine(null, null);
+    }
+    
+    // Y si estamos viendo la colección principal, limpiemos las referencias a winemakers
+    if (currentPath === '/') {
+      handleSetSpecificWinemaker(null, null);
+    }
+  }, [location.pathname, specificWinemakerId, specificWineId]);
 
   const handleSetPreviousPath = (path: string) => {
     setPreviousPath(path);

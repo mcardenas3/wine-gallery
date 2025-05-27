@@ -15,9 +15,9 @@ import { useNavigation } from '../context/NavigationContext';
 
 export default function WinemakerInformation() {
   const { id } = useParams<{ id: string }>();
-  const { specificWineId, specificWineName, setSpecificWinemaker } = useNavigation();
+  const { specificWineId, specificWineName, setSpecificWinemaker, sourceContext } = useNavigation();
   const location = useLocation();
-  const { previousPath, sourceContext } = useNavigation();
+  const { previousPath } = useNavigation();
   const [winemaker, setWinemaker] = useState<Winemaker | null>(null)
   const [wines, setWines] = useState<Wine[]>([])
   const [loading, setLoading] = useState(true)
@@ -71,12 +71,13 @@ export default function WinemakerInformation() {
     }
   }, [id, winemaker, setSpecificWinemaker]);
 
-  // Determinar a dónde volver
+  // Determinar a dónde volver - corregimos la lógica
   let backTo = '/winemakers';
   let backLabel = 'Back to winemakers';
   
-  // Si venimos de un vino específico, volvemos a él
-  if (specificWineId) {
+  // Solo si venimos directamente de un vino específico y el contexto sigue siendo colección
+  // regresamos a ese vino
+  if (specificWineId && sourceContext === 'collection') {
     backTo = `/wine/${specificWineId}`;
     backLabel = specificWineName ? `Back to ${specificWineName}` : 'Back to wine';
   }

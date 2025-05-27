@@ -110,18 +110,16 @@ export default function WineDetail() {
     let backTo = '/';
     let backLabel = 'Back to collection';
     
-    if (sourceContext === 'winemakers') {
-      if (specificWinemakerId) {
-        // Si tenemos un ID específico de winemaker, volvemos a su página
-        backTo = `/winemaker/${specificWinemakerId}`;
-        backLabel = specificWinemakerName 
-          ? `Back to ${specificWinemakerName}` 
-          : 'Back to winemaker';
-      } else {
-        // Si no hay ID específico, volvemos a la lista de winemakers
-        backTo = '/winemakers';
-        backLabel = 'Back to winemakers';
-      }
+    // Solo si el contexto es de winemakers y tenemos un ID específico, volvemos a ese winemaker
+    if (sourceContext === 'winemakers' && specificWinemakerId) {
+      backTo = `/winemaker/${specificWinemakerId}`;
+      backLabel = specificWinemakerName 
+        ? `Back to ${specificWinemakerName}` 
+        : 'Back to winemaker';
+    } else if (sourceContext === 'winemakers') {
+      // Si el contexto es winemakers pero no tenemos un ID específico
+      backTo = '/winemakers';
+      backLabel = 'Back to winemakers';
     }
     
     return (

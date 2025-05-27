@@ -35,7 +35,17 @@ export default function Winemakers() {
 
   return (
     <Container maxWidth="lg" sx={{ minHeight: '100vh', py: 8 }}>
-      <Typography variant="h3" align="center" gutterBottom>
+      <Typography 
+        variant="h2" 
+        component="h1" 
+        align="center" 
+        gutterBottom
+        sx={{ 
+          fontFamily: '"Playfair Display", serif',
+          fontWeight: 400,
+          mb: 6
+        }}
+      >
         Winemakers
       </Typography>
       <Box sx={{ 
