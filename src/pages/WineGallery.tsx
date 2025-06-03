@@ -12,6 +12,9 @@ import Chip from '@mui/material/Chip'
 import WineCard from '../components/WineCard'
 import { supabase } from '../services/supabaseClient'
 
+/**
+ * Tipo que define la estructura de datos de un vino
+ */
 type Wine = {
   id: string
   name: string
@@ -21,6 +24,12 @@ type Wine = {
   wine_media?: any[]
 }
 
+/**
+ * Componente WineGallery
+ * 
+ * Este componente muestra una galería de vinos con funcionalidades de filtrado.
+ * Permite a los usuarios explorar la colección de vinos y filtrarlos por tipo y uva.
+ */
 export default function WineGallery() {
   const [wines, setWines] = useState<Wine[]>([])
   const [loading, setLoading] = useState(true)
@@ -29,7 +38,13 @@ export default function WineGallery() {
   const [uniqueTypes, setUniqueTypes] = useState<string[]>([])
   const [uniqueGrapes, setUniqueGrapes] = useState<string[]>([])
 
+  /**
+   * Efecto para cargar los vinos desde la base de datos al montar el componente
+   */
   useEffect(() => {
+    /**
+     * Función asíncrona para obtener los vinos desde Supabase
+     */
     async function fetchWines() {
       try {
         const { data: winesData, error } = await supabase
@@ -43,7 +58,6 @@ export default function WineGallery() {
           throw error
         }
 
-        // Extract unique types and grapes for filters
         if (winesData) {
           const types = [...new Set(winesData.map(wine => wine.type))].filter(Boolean) as string[];
           const grapes = [...new Set(winesData.map(wine => wine.grape))].filter(Boolean) as string[];
@@ -61,28 +75,40 @@ export default function WineGallery() {
     fetchWines()
   }, [])
 
-  // Filter wines based on selected filters
+  /**
+   * Filtra los vinos basándose en los filtros seleccionados
+   */
   const filteredWines = wines.filter(wine => {
     const matchesType = !typeFilter || wine.type === typeFilter;
     const matchesGrape = !grapeFilter || wine.grape === grapeFilter;
     return matchesType && matchesGrape;
   });
 
-  // Handle filter changes
+  /**
+   * Maneja el cambio en el filtro de tipo de vino
+   * @param {any} event - Evento de cambio del select
+   */
   const handleTypeFilterChange = (event: any) => {
     setTypeFilter(event.target.value);
   };
 
+  /**
+   * Maneja el cambio en el filtro de uva
+   * @param {any} event - Evento de cambio del select
+   */
   const handleGrapeFilterChange = (event: any) => {
     setGrapeFilter(event.target.value);
   };
 
-  // Clear filters
+  /**
+   * Limpia todos los filtros aplicados
+   */
   const clearFilters = () => {
     setTypeFilter('');
     setGrapeFilter('');
   };
 
+  // Muestra un indicador de carga mientras se obtienen los datos
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
@@ -107,9 +133,7 @@ export default function WineGallery() {
         Wine Collection
       </Typography>
       
-      {/* Filters section */}
       <Box sx={{ mb: 6 }}>
-        {/* Filter selects - placed in separate containers to avoid overlapping */}
         <Box sx={{ 
           display: 'flex', 
           flexDirection: { xs: 'column', sm: 'row' }, 
@@ -149,7 +173,6 @@ export default function WineGallery() {
           </FormControl>
         </Box>
         
-        {/* Active filters */}
         {(typeFilter || grapeFilter) && (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
             {typeFilter && (
@@ -180,7 +203,6 @@ export default function WineGallery() {
           </Box>
         )}
         
-        {/* Results count */}
         <Typography 
           variant="body1" 
           sx={{ mt: 3, color: '#57534e' }}
@@ -189,7 +211,6 @@ export default function WineGallery() {
         </Typography>
       </Box>
       
-      {/* Wine cards */}
       <Grid container spacing={4}>
         {filteredWines.map(wine => (
           <Grid item xs={12} sm={6} md={4} key={wine.id}>
@@ -198,7 +219,6 @@ export default function WineGallery() {
         ))}
       </Grid>
       
-      {/* No results message */}
       {filteredWines.length === 0 && (
         <Box sx={{ 
           textAlign: 'center', 

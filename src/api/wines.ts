@@ -36,8 +36,8 @@ export type Winemaker = {
 }
 
 /**
- * Fetches all wines with basic information for the gallery view
- */
+ - Obtiene todos los vinos con información para vistas de galería/lista
+ **/
 export async function getAllWines(): Promise<Wine[]> {
   const { data, error } = await supabase
     .from('wines')
@@ -55,8 +55,8 @@ export async function getAllWines(): Promise<Wine[]> {
 }
 
 /**
- * Fetches detailed information for a single wine
- */
+ - Obtiene información detallada completa de un vino específico
+ **/
 export async function getWineById(id: string): Promise<Wine | null> {
   const { data, error } = await supabase
     .from('wines')
@@ -77,8 +77,8 @@ export async function getWineById(id: string): Promise<Wine | null> {
 }
 
 /**
- * Fetches wines by place
- */
+ - Obtiene todos los vinos producidos en un lugar geográfico específico
+ **/
 export async function getWinesByPlace(placeId: string): Promise<Wine[]> {
   const { data, error } = await supabase
     .from('wines')
@@ -97,8 +97,8 @@ export async function getWinesByPlace(placeId: string): Promise<Wine[]> {
 }
 
 /**
- * Fetches wines by winemaker
- */
+ - Obtiene todos los vinos producidos por un winemaker específico
+ **/
 export async function getWinesByWinemaker(winemakerId: string): Promise<Wine[]> {
   const { data, error } = await supabase
     .from('wines')
@@ -117,8 +117,8 @@ export async function getWinesByWinemaker(winemakerId: string): Promise<Wine[]> 
 }
 
 /**
- * Fetches place information for a wine
- */
+ - Obtiene información del lugar para un vino
+ **/
 export async function getWinePlace(placeId: string): Promise<Place | null> {
   if (!placeId) return null
   
@@ -136,8 +136,8 @@ export async function getWinePlace(placeId: string): Promise<Place | null> {
 }
 
 /**
- * Fetches winemaker information for a wine
- */
+ - Obtiene información del winemaker para un vino
+ **/
 export async function getWineWinemaker(winemakerId: string): Promise<Winemaker | null> {
   if (!winemakerId) return null
   
@@ -152,4 +152,4 @@ export async function getWineWinemaker(winemakerId: string): Promise<Winemaker |
     return null
   }
   return data as Winemaker
-} 
+}

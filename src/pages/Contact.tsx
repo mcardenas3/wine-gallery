@@ -5,7 +5,6 @@ import {
   Box, 
   TextField, 
   Button, 
-  Stack,
   Snackbar,
   Alert,
   FormGroup,
@@ -15,7 +14,7 @@ import {
 } from '@mui/material';
 
 // Crear un campo de formulario personalizado
-const CustomField = styled(TextField)(({ theme }) => ({
+const CustomField = styled(TextField)(({  }) => ({
   '& .MuiOutlinedInput-root': {
     backgroundColor: '#f9f9f9',
     borderRadius: '8px',
@@ -36,7 +35,7 @@ const CustomField = styled(TextField)(({ theme }) => ({
 }));
 
 // Crear un botón personalizado
-const SubmitButton = styled(Button)(({ theme }) => ({
+const SubmitButton = styled(Button)(({ }) => ({
   backgroundColor: '#000',
   color: '#fff',
   padding: '12px 32px',
@@ -52,7 +51,6 @@ const SubmitButton = styled(Button)(({ theme }) => ({
 }));
 
 export default function Contact() {
-  // Form state
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -62,12 +60,10 @@ export default function Contact() {
     agreeTerms: false
   });
   
-  // Form validation and submission state
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  // Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -75,7 +71,6 @@ export default function Contact() {
       [name]: value
     }));
     
-    // Clear error when user types
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -84,7 +79,6 @@ export default function Contact() {
     }
   };
 
-  // Validate form
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
@@ -118,20 +112,17 @@ export default function Contact() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (validateForm()) {
       setIsSubmitting(true);
       
-      // Simulate API call with timeout
       setTimeout(() => {
         console.log('Form submitted:', formData);
         setIsSubmitting(false);
         setSubmitSuccess(true);
         
-        // Reset form after successful submission
         setFormData({
           firstName: '',
           lastName: '',
@@ -144,7 +135,6 @@ export default function Contact() {
     }
   };
 
-  // Close success notification
   const handleCloseSnackbar = () => {
     setSubmitSuccess(false);
   };

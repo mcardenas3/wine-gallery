@@ -2,6 +2,12 @@ import { Box, Button, Container, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+/**
+ * WineNotFound - Componente de página para mostrar cuando un vino no es encontrado
+ * 
+ * Este componente muestra una página de error amigable cuando el usuario intenta
+ * acceder a un vino que no existe en la colección o que no está disponible.
+ **/
 export default function WineNotFound() {
   return (
     <Container maxWidth="lg" sx={{ py: 8, minHeight: '80vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>

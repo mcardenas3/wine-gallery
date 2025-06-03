@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link, useLocation } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../services/supabaseClient'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
@@ -10,36 +10,61 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import WineCard from '../components/WineCard'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import type { Winemaker } from '../api/winemakers'
-import type { Wine } from '../components/WineCard'
 import { useNavigation } from '../context/NavigationContext';
 
+// Define the Wine type if not already imported
+type Wine = {
+  id: string;
+  name: string;
+  type?: string;
+  grape?: string;
+  owner?: string;
+  wine_media?: {
+    url: string;
+    media_type?: string;
+    description?: string;
+  }[];
+  [key: string]: any;
+};
+
+/**
+ * Componente WinemakerInformation
+ * 
+ * Este componente muestra información detallada sobre un vinicultor específico
+ * y los vinos producidos por él. Recupera los datos del vinicultor y sus vinos
+ * desde la base de datos Supabase utilizando el ID proporcionado en los parámetros
+ * de la URL.
+ */
 export default function WinemakerInformation() {
-  const { id } = useParams<{ id: string }>();
-  const { specificWineId, specificWineName, setSpecificWinemaker, sourceContext } = useNavigation();
-  const location = useLocation();
-  const { previousPath } = useNavigation();
-  const [winemaker, setWinemaker] = useState<Winemaker | null>(null)
+  const { id } = useParams<{ id: string }>();  
+  const { specificWineId, specificWineName, setSpecificWinemaker, sourceContext } = useNavigation();  
+  const [winemaker, setWinemaker] = useState<Winemaker | null>(null)  
   const [wines, setWines] = useState<Wine[]>([])
   const [loading, setLoading] = useState(true)
 
+  /**
+   * Efecto que se ejecuta al cargar el componente o cuando cambia el ID
+   * para obtener los datos del vinicultor y sus vinos
+   */
   useEffect(() => {
     async function fetchWinemakerData() {
       if (!id) return
 
       try {
-        // Fetch winemaker details
+        // Consulta para obtener los detalles del vinicultor
         const { data: winemakerData, error: winemakerError } = await supabase
           .from('winemakers')
           .select('id, name, bio, photo_url')
           .eq('id', id)
           .single()
 
+        // Manejar errores en la consulta del vinicultor
         if (winemakerError) {
           console.error('Error fetching winemaker:', winemakerError)
           throw winemakerError
         }
 
-        // Fetch wines by this winemaker
+        // Consulta para obtener los vinos producidos por este vinicultor
         const { data: winemakerWines, error: winesError } = await supabase
           .from('wines')
           .select(`
@@ -71,12 +96,9 @@ export default function WinemakerInformation() {
     }
   }, [id, winemaker, setSpecificWinemaker]);
 
-  // Determinar a dónde volver - corregimos la lógica
   let backTo = '/winemakers';
   let backLabel = 'Back to winemakers';
   
-  // Solo si venimos directamente de un vino específico y el contexto sigue siendo colección
-  // regresamos a ese vino
   if (specificWineId && sourceContext === 'collection') {
     backTo = `/wine/${specificWineId}`;
     backLabel = specificWineName ? `Back to ${specificWineName}` : 'Back to wine';

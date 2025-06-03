@@ -7,12 +7,19 @@ import CardActionArea from '@mui/material/CardActionArea'
 import { Box } from '@mui/material'
 import type { Winemaker } from '../api/winemakers'
 
+/**
+ * Componente WinemakerCard - Muestra la información de un vinicultor en formato de tarjeta
+ * Este componente recibe un objeto winemaker y muestra su información en una tarjeta
+ * interactiva que permite navegar a la página de detalle del vinicultor al hacer clic.
+ */
 export default function WinemakerCard({ winemaker }: { winemaker: Winemaker }) {
   const navigate = useNavigate()
   const location = useLocation()
 
+  /**
+   * Maneja el clic en la tarjeta del vinicultor
+   */
   const handleCardClick = () => {
-    // Guardamos el contexto antes de navegar
     localStorage.setItem('sourcePathBeforeWinemaker', location.pathname)
     
     navigate(`/winemaker/${winemaker.id}`)
@@ -64,7 +71,6 @@ export default function WinemakerCard({ winemaker }: { winemaker: Winemaker }) {
           <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', mb: 1 }}>
             {winemaker.name}
           </Typography>
-          
           {winemaker.bio ? (
             <Typography 
               variant="body2" 
@@ -73,8 +79,8 @@ export default function WinemakerCard({ winemaker }: { winemaker: Winemaker }) {
                 overflow: 'hidden', 
                 textOverflow: 'ellipsis', 
                 display: '-webkit-box', 
-                WebkitLineClamp: 4, 
-                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: 4,               
+                WebkitBoxOrient: 'vertical',  
                 mt: 1
               }}
             >

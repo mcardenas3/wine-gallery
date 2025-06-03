@@ -43,11 +43,6 @@ const theme = createTheme({
 function App() {
   const [tab, setTab] = useState(0)
 
-  // Actualizar esta función para que navegue a la ruta correspondiente
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setTab(newValue)
-  }
-
   // Agregar una función de navegación para los tabs
   const TabNavigationContent = () => {
     const navigate = useNavigate();

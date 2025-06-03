@@ -1,21 +1,28 @@
-import { Grid } from '@mui/material'; // Use regular Grid from @mui/material
+import { Grid } from '@mui/material'; 
 import WineCard from './WineCard';
 
 type Media = {
-  url: string
-  media_type: 'image' | 'video'
-  description?: string
+  url: string   
+  media_type: 'image' | 'video' 
+  description?: string    
 }
 
+/**
+ * Tipo que representa la información básica de un vino para mostrar en la galería
+ */
 type Wine = {
-  id: string
-  name: string
-  type: string
-  grape: string
-  owner: string
-  wine_media?: Media[]
+  id: string    
+  name: string 
+  type: string   
+  grape: string    
+  owner: string 
+  wine_media?: Media[]   
 }
 
+/**
+ * Componente WineGrid - Crea una grid responsivo de tarjetas de vino
+ * Este componente recibe un array de vinos y los muestra en una grid.
+ */
 export default function WineGrid({ wines }: { wines: Wine[] }) {
   if (wines.length === 0) {
     return (
@@ -25,6 +32,7 @@ export default function WineGrid({ wines }: { wines: Wine[] }) {
     )
   }
 
+  // Renderizamos la cuadrícula de vinos
   return (
     <Grid container spacing={4} justifyContent="center">
       {wines.map(wine => (

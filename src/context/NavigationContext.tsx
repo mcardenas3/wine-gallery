@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 
 interface NavigationContextType {
@@ -27,8 +28,17 @@ const defaultContext: NavigationContextType = {
 
 const NavigationContext = createContext<NavigationContextType>(defaultContext);
 
+/**
+ * Hook personalizado para acceder al contexto de navegación desde cualquier componente
+ */
 export const useNavigation = () => useContext(NavigationContext);
 
+/**
+ * Proveedor del contexto de navegación
+ * Este componente mantiene el estado de navegación de la aplicación y proporciona
+ * funciones para actualizarlo. Guarda el estado en localStorage para persistencia
+ * entre sesiones y maneja automáticamente los cambios de ruta.
+ */
 export const NavigationProvider = ({ children }: { children: ReactNode }) => {
   const [previousPath, setPreviousPath] = useState('/');
   const [sourceContext, setSourceContext] = useState<'winemakers' | 'collection' | 'other'>('collection');
@@ -38,7 +48,6 @@ export const NavigationProvider = ({ children }: { children: ReactNode }) => {
   const [specificWineName, setSpecificWineName] = useState<string | null>(null);
   const location = useLocation();
 
-  // Recuperar estado almacenado en localStorage al cargar
   useEffect(() => {
     const storedPath = localStorage.getItem('previousPath');
     const storedContext = localStorage.getItem('navigationContext');
@@ -75,18 +84,14 @@ export const NavigationProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const currentPath = location.pathname;
     
-    // No rastreamos las rutas de detalles como "rutas previas"
     if (!currentPath.includes('/wine/') && !currentPath.includes('/winemaker/')) {
       setPreviousPath(currentPath);
       localStorage.setItem('previousPath', currentPath);
       
-      // Actualizar el contexto basado en la ruta
       if (currentPath === '/' || currentPath === '/collection') {
         setSourceContext('collection');
         localStorage.setItem('navigationContext', 'collection');
         
-        // Limpiar los IDs específicos de winemaker cuando cambiamos a colección
-        // para evitar que persistan entre contextos diferentes
         if (specificWinemakerId) {
           handleSetSpecificWinemaker(null, null);
         }
@@ -94,21 +99,16 @@ export const NavigationProvider = ({ children }: { children: ReactNode }) => {
         setSourceContext('winemakers');
         localStorage.setItem('navigationContext', 'winemakers');
         
-        // Limpiar los IDs específicos de vino cuando cambiamos a winemakers
-        // para evitar que persistan entre contextos diferentes
         if (specificWineId) {
           handleSetSpecificWine(null, null);
         }
       }
     }
     
-    // Adicionalmente, si estamos viendo winemakers, asegurémonos de limpiar 
-    // cualquier referencia a vinos específicos
     if (currentPath === '/winemakers') {
       handleSetSpecificWine(null, null);
     }
     
-    // Y si estamos viendo la colección principal, limpiemos las referencias a winemakers
     if (currentPath === '/') {
       handleSetSpecificWinemaker(null, null);
     }
@@ -118,7 +118,6 @@ export const NavigationProvider = ({ children }: { children: ReactNode }) => {
     setPreviousPath(path);
     localStorage.setItem('previousPath', path);
     
-    // Actualizar el contexto basado en la ruta
     if (path === '/' || path.includes('/wine/')) {
       setSourceContext('collection');
       localStorage.setItem('navigationContext', 'collection');

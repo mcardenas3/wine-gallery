@@ -9,8 +9,8 @@ export type Place = {
 }
 
 /**
- * Fetches all places
- */
+ - Obtiene todos los lugares de la base de datos
+ **/
 export async function getAllPlaces(): Promise<Place[]> {
   const { data, error } = await supabase
     .from('places')
@@ -25,8 +25,8 @@ export async function getAllPlaces(): Promise<Place[]> {
 }
 
 /**
- * Fetches a single place by ID
- */
+ - Obtiene un lugar específico por su Primary Key (ID)
+ **/
 export async function getPlaceById(id: string): Promise<Place | null> {
   const { data, error } = await supabase
     .from('places')
@@ -42,8 +42,8 @@ export async function getPlaceById(id: string): Promise<Place | null> {
 }
 
 /**
- * Fetches wines from a specific region
- */
+ - Obtiene todos los vinos producidos en una región específica
+ **/
 export async function getWinesByRegion(region: string): Promise<Wine[]> {
   const { data, error } = await supabase
     .from('wines')
@@ -63,8 +63,8 @@ export async function getWinesByRegion(region: string): Promise<Wine[]> {
 }
 
 /**
- * Fetches wines from a specific country
- */
+ - Obtiene todos los vinos producidos en un país específico
+ **/
 export async function getWinesByCountry(country: string): Promise<Wine[]> {
   const { data, error } = await supabase
     .from('wines')
@@ -81,4 +81,4 @@ export async function getWinesByCountry(country: string): Promise<Wine[]> {
     return []
   }
   return data as unknown as Wine[]
-} 
+}

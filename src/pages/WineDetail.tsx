@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { supabase } from '../services/supabaseClient';
 import { 
   Container, 
   Typography, 
-  Box, 
-  Grid,
+  Box,
   Button,
   Card,
-  CardMedia
+  CardMedia,
+  Grid
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -18,20 +18,45 @@ import PersonIcon from '@mui/icons-material/Person';
 import { Link } from 'react-router-dom';
 import { useNavigation } from '../context/NavigationContext';
 
+export type Wine = {
+  id: string;
+  name: string;
+  owner: string;
+  region?: string;
+  year?: number;
+  type?: string;
+  story?: string;
+  tasting_notes?: string;
+  production_process?: string;
+  wine_media?: Array<any>;
+  winemaker_id?: string;
+  winemaker_name?: string;
+  winemaker_bio?: string;
+};
+
+/**
+ * Componente WineDetail
+ * 
+ * Este componente muestra información detallada sobre un vino específico,
+ * incluyendo imágenes, detalles técnicos, historia, notas de cata y 
+ * información sobre el vinicultor y la región.
+ */
 export default function WineDetail() {
   const { id } = useParams<{ id: string }>();
   const [wine, setWine] = useState<Wine | null>(null);
   const [loading, setLoading] = useState(true);
   const { sourceContext, specificWinemakerId, specificWinemakerName, setSpecificWine } = useNavigation();
 
+  /**
+   * Efecto para cargar los datos del vino seleccionado
+   */
   useEffect(() => {
     async function fetchWine() {
       if (!id) return;
       
       try {
-        console.log("Fetching wine with ID:", id); // Para depuración
+        console.log("Fetching wine with ID:", id);
 
-        // Primero, obtengamos los datos básicos del vino
         const { data: wineData, error: wineError } = await supabase
           .from('wines')
           .select('*')
@@ -43,14 +68,13 @@ export default function WineDetail() {
           throw wineError;
         }
 
-        console.log("Wine data:", wineData); // Para depuración
+        console.log("Wine data:", wineData);
         
         if (!wineData) {
           setLoading(false);
           return;
         }
 
-        // Ahora obtengamos los medios asociados al vino
         const { data: mediaData, error: mediaError } = await supabase
           .from('wine_media')
           .select('*')
@@ -60,9 +84,8 @@ export default function WineDetail() {
           console.error("Error fetching media:", mediaError);
         }
         
-        console.log("Media data:", mediaData); // Para depuración
+        console.log("Media data:", mediaData);
 
-        // Obtengamos la información del fabricante si está disponible
         let winemakerData = null;
         if (wineData.winemaker_id) {
           const { data: maker, error: makerError } = await supabase
@@ -77,8 +100,6 @@ export default function WineDetail() {
             winemakerData = maker;
           }
         }
-
-        // Construyamos el objeto Wine completo
         const completeWine: Wine = {
           ...wineData,
           wine_media: mediaData || [],
@@ -97,27 +118,26 @@ export default function WineDetail() {
     fetchWine();
   }, [id]);
 
-  // Guardar el ID del vino actual para navegación de regreso
   useEffect(() => {
     if (id && wine) {
       setSpecificWine(id, wine.name);
     }
   }, [id, wine, setSpecificWine]);
 
-  // Función de renderizado que usa el contexto
+  /**
+   * Renderiza los detalles del vino y maneja la navegación contextual
+   */
   const renderWineDetails = (wine: Wine) => {
     // Determinar a dónde volver
     let backTo = '/';
     let backLabel = 'Back to collection';
     
-    // Solo si el contexto es de winemakers y tenemos un ID específico, volvemos a ese winemaker
     if (sourceContext === 'winemakers' && specificWinemakerId) {
       backTo = `/winemaker/${specificWinemakerId}`;
       backLabel = specificWinemakerName 
         ? `Back to ${specificWinemakerName}` 
         : 'Back to winemaker';
     } else if (sourceContext === 'winemakers') {
-      // Si el contexto es winemakers pero no tenemos un ID específico
       backTo = '/winemakers';
       backLabel = 'Back to winemakers';
     }
@@ -146,7 +166,7 @@ export default function WineDetail() {
           </Button>
           
           <Grid container spacing={8}>
-            {/* LEFT SIDE - Wine Image */}
+            {/* Sección izquierda - Imagen principal del vino y galería de miniaturas */}
             <Grid item xs={12} md={6} sx={{ order: { xs: 2, md: 1 } }}>
               <Box sx={{ 
                 bgcolor: '#f5f5f4', 
@@ -159,6 +179,7 @@ export default function WineDetail() {
                 alignItems: 'center',
                 mb: 2
               }}>
+                {/* Mostrar imagen principal si existe, o un mensaje si no hay imágenes */}
                 {mainImage ? (
                   <img 
                     src={mainImage.url} 
@@ -183,7 +204,6 @@ export default function WineDetail() {
                 )}
               </Box>
               
-              {/* Thumbnail gallery with fixed size */}
               {additionalImages && additionalImages.length > 0 && (
                 <Grid container spacing={2}>
                   {additionalImages.map((media, index) => (
@@ -210,7 +230,7 @@ export default function WineDetail() {
               )}
             </Grid>
             
-            {/* RIGHT SIDE - Wine Information */}
+            {/* Lado derecho - Informacion del vino */}
             <Grid item xs={12} md={6} sx={{ order: { xs: 1, md: 2 } }}>
               <Typography 
                 variant="h2" 
@@ -239,7 +259,7 @@ export default function WineDetail() {
                 {wine.owner}
               </Typography>
               
-              {/* Wine metadata */}
+              {/* Informacion del vino */}
               <Grid container spacing={3} sx={{ mb: 5 }}>
                 <Grid item xs={6} sm={3} md={6} lg={3}>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -267,7 +287,7 @@ export default function WineDetail() {
                 </Grid>
               </Grid>
             
-              {/* The Story */}
+              {/* Historia */}
               {wine.story && (
                 <Box sx={{ mb: 5 }}>
                   <Typography 
@@ -294,7 +314,7 @@ export default function WineDetail() {
                 </Box>
               )}
               
-              {/* Production Process */}
+              {/* Produccion del proceso */}
               {wine.production_process && (
                 <Box sx={{ mb: 5 }}>
                   <Typography 
@@ -321,7 +341,7 @@ export default function WineDetail() {
                 </Box>
               )}
               
-              {/* Tasting Notes */}
+              {/* Notas de degustación*/}
               {wine.tasting_notes && (
                 <Box sx={{ mb: 5 }}>
                   <Typography 
@@ -353,7 +373,6 @@ export default function WineDetail() {
           {/* Sección adicional para información del winemaker y región */}
           <Box sx={{ mt: 10, pt: 6, borderTop: '1px solid #e5e7eb' }}>
             <Grid container spacing={8}>
-              {/* Winemaker Information */}
               <Grid item xs={12} md={6}>
                 <Typography 
                   variant="h4" 
@@ -414,7 +433,7 @@ export default function WineDetail() {
                 )}
               </Grid>
               
-              {/* Wine Region Information */}
+              {/* Infomracion de region */}
               <Grid item xs={12} md={6}>
                 <Typography 
                   variant="h4" 
@@ -464,6 +483,9 @@ export default function WineDetail() {
     );
   };
 
+  /**
+   * Renderiza un indicador de carga mientras se obtienen los datos
+   */
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
@@ -472,7 +494,9 @@ export default function WineDetail() {
     );
   }
 
-  // Si no se encuentra el vino, mostrar un mensaje y un botón para volver
+  /**
+   * Renderiza un mensaje de error si no se encuentra el vino
+   */
   if (!wine) {
     return (
       <Container maxWidth="lg" sx={{ py: 8 }}>
@@ -484,6 +508,7 @@ export default function WineDetail() {
     );
   }
 
+  // Determinar la imagen principal y las imágenes adicionales para la galería
   const mainImage = wine.wine_media?.find(m => m.media_type === 'image');
   const additionalImages = wine.wine_media?.filter(m => m.media_type === 'image').slice(1, 4);
   

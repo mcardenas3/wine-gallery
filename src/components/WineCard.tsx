@@ -7,27 +7,30 @@ import { Box } from '@mui/material'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 type Media = {
-    url: string
-    media_type: 'image' | 'video'
-    description?: string
-  }
+    url: string                    
+    media_type: 'image' | 'video'  
+    description?: string        
+}
   
-  type Wine = {
-    id: string
-    name: string
-    type: string
-    grape: string
-    owner: string
-    wine_media?: Media[]
-  }
+type Wine = {
+    id: string                    
+    name: string                 
+    type: string                 
+    grape: string               
+    owner: string                  
+    wine_media?: Media[]   
+}
   
-  export default function WineCard({ wine }: { wine: Wine }) {
-    // Use try-catch to handle cases when not inside a Router context
+/**
+ * Componente WineCard - Muestra una tarjeta individual para cada vino en la galería
+ * Este componente recibe un objeto wine y renderiza una tarjeta con su información básica
+ * y una imagen. Al hacer clic, navega a la página de detalle del vino específico.
+ */
+export default function WineCard({ wine }: { wine: Wine }) {
     let navigate;
     try {
       navigate = useNavigate();
     } catch (error) {
-      // If not in Router context, provide a dummy function
       navigate = () => console.log('Navigation not available');
     }
 
@@ -35,12 +38,14 @@ type Media = {
 
     const firstImage = wine.wine_media?.find(m => m.media_type === 'image')
 
+    /**
+     * Maneja el clic en la tarjeta del vino
+     * Guarda el contexto de navegación actual y navega a la página de detalle
+     */
     const handleCardClick = () => {
       try {
-        // Guardamos el contexto antes de navegar
         localStorage.setItem('sourcePathBeforeWine', location.pathname);
         
-        // Si estamos viendo un winemaker, guardamos esa información
         if (location.pathname.includes('/winemaker/')) {
           localStorage.setItem('navigationContext', 'winemakers');
         }
@@ -89,7 +94,6 @@ type Media = {
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
               <Typography variant="body1" color="text.secondary">{wine.type}</Typography>
-              {/* Year could be extracted from wine name or added as a property to the Wine type */}
               <Typography variant="h6">
                 {wine.name.match(/\d{4}/) || "N/A"}
               </Typography>

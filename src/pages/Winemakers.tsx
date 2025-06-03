@@ -7,10 +7,16 @@ import WinemakerCard from '../components/WinemakerCard'
 import { getAllWinemakers } from '../api/winemakers'
 import type { Winemaker } from '../api/winemakers'
 
+/**
+ * Componente Winemakers
+ * 
+ * Este componente muestra una lista de todos los winemakers disponibles en la aplicación.
+ * Realiza una llamada a la API para obtener los datos de los winemakers y los muestra
+ * en una cuadrícula responsiva utilizando tarjetas individua
+ */
 export default function Winemakers() {
   const [winemakers, setWinemakers] = useState<Winemaker[]>([])
   const [loading, setLoading] = useState(true)
-
   useEffect(() => {
     async function fetchWinemakers() {
       try {
@@ -23,8 +29,11 @@ export default function Winemakers() {
       }
     }
     fetchWinemakers()
-  }, [])
+  }, []) 
 
+  /**
+   * Renderiza un indicador de carga mientras se obtienen los datos
+   */
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
